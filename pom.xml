@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.james.consulsample</groupId>
+    <artifactId>microservice-consul-sample</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>springcloud-config-server</module>
+        <module>springcloud-config-client</module>
+    </modules>
+
+    <parent>
+        <groupId>com.truderal.framework</groupId>
+        <artifactId>truderal-parent</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <zookeeper.version>3.4.6</zookeeper.version>
+        <zkclient.version>0.10</zkclient.version>
+        <curator.version>2.6.0</curator.version>
+        <mybatis.version>3.4.2</mybatis.version>
+        <autoconfig-plugin-version>1.2</autoconfig-plugin-version>
+        <kafka.version>0.8.2.2</kafka.version>
+        <kafkaclient.version>0.10.1.0</kafkaclient.version>
+        <fastjson.version>1.2.33</fastjson.version>
+        <jackson-databind.version>2.8.9</jackson-databind.version>
+        <hibernate.validator>5.0.1.Final</hibernate.validator>
+        <bean-validation.version>1.1.0.Final</bean-validation.version>
+        <commons.httpclient.version>4.5.1</commons.httpclient.version>
+        <cif.version>1.0.1-SNAPSHOT</cif.version>
+        <commonservice.version>1.0.2</commonservice.version>
+        <common.service.client>1.0.0-SNAPSHOT</common.service.client>
+        <springfox-swagger2.version>2.6.0</springfox-swagger2.version>
+        <springfox-swagger-ui.version>2.6.0</springfox-swagger-ui.version>
+        <moxie-core.version>1.4-SNAPSHOT</moxie-core.version>
+        <biz-kafkamonitor.version>0.0.6-SNAPSHOT</biz-kafkamonitor.version>
+        <xbcommon.version>1.2-SNAPSHOT</xbcommon.version>
+        <commons.config.version>1.3-SNAPSHOT</commons.config.version>
+        <pagehelper.version>4.1.4</pagehelper.version>
+        <common-logging.version>1.0.0-SNAPSHOT</common-logging.version>
+        <cif.client.version>2.0.4-SNAPSHOT</cif.client.version>
+        <xinbang-dispatch.version>1.1-SNAPSHOT</xinbang-dispatch.version>
+        <msgcenter.version>2.0-SNAPSHOT</msgcenter.version>
+        <common-config.version>1.3-SNAPSHOT</common-config.version>
+        <moxieutil.version>1.1-SNAPSHOT</moxieutil.version>
+        <retrofit.version>2.1.0</retrofit.version>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>2.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>2.6.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

@@ -1,0 +1,25 @@
+spring:
+ application:
+   name: springcloud-config-server
+ cloud:
+   consul:
+     host: localhost
+     port: 8500
+     discovery:
+        healthCheckUrl: http://localhost:${server.port}/health
+        #health-check-path: /health
+        healthCheckInterval: 15s
+        instance-id: springcloud-config-server
+   config:
+     server:
+        git:
+             #uri: https://github.com/ityouknow/spring-cloud-starter/     # 配置git仓库的地址
+             #search-paths: config-repo                             # git仓库地址下的相对地址，可以配置多个，用,分割。
+         uri: http://192.168.1.82/Open-Documents/MeetingRecord.git
+         search-paths: config
+         username:  JamesTang                                              # git仓库的账号
+         password:  gitlab2017@xb
+
+management:
+ security:
+   enabled: false

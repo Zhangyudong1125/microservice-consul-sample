@@ -1,0 +1,25 @@
+spring:
+ cloud:
+  consul:
+    host: localhost
+    port: 8500
+    discovery:
+      healthCheckUrl: http://localhost:${server.port}/health
+      #health-check-path: /health
+      #healthCheckPath: http://localhost:${server.port}/health
+      healthCheckInterval: 15s
+      instance-id: aconsul_htp
+  config:
+    name: neo-config
+    profile: dev
+    #uri: http://localhost:3088/
+    discovery:
+      enabled: true
+      serviceId: springcloud-config-server
+    label: master
+ application:
+  name: aconsul_htp
+
+management:
+  security:
+    enabled: false
