@@ -1,0 +1,17 @@
+spring:
+ application:
+   name: springcloud-redislock
+ cloud:
+   consul:
+     host: localhost
+     port: 8500
+     discovery:
+        healthCheckUrl: http://localhost:${server.port}/health
+        #health-check-path: /health
+        healthCheckInterval: 15s
+        instance-id: springcloud-redislock
+
+
+management:
+ security:
+   enabled: false

@@ -11,6 +11,9 @@
     <modules>
         <module>springcloud-config-server</module>
         <module>springcloud-config-client</module>
+        <module>springcloud-service-robbin</module>
+        <module>easyrule-engine</module>
+        <module>springcloud-redislock</module>
     </modules>
 
     <parent>
