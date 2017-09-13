@@ -4,9 +4,11 @@
  */
 package com.james.component;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
+import com.ecwid.consul.v1.QueryParams;
+import com.ecwid.consul.v1.Response;
+import com.ecwid.consul.v1.health.model.HealthService;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.cloud.config.client.ConfigServicePropertySourceLocator;
 import org.springframework.cloud.config.environment.Environment;
@@ -18,6 +20,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * @author militang
@@ -27,12 +30,13 @@ import org.springframework.web.client.RestTemplate;
 public class GenConfigServerProperties {
 
     public Environment getCommonProperties() {
-
-        return null;
-
+        ConfigServerProVo getconfigServerProVo =this.getconfigServerProVo();
+        RestTemplate  restTemplate=getSecureRestTemplate(getconfigServerProVo);
+        Environment  environment=  this.getRemoteEnvironment(restTemplate,getconfigServerProVo,getconfigServerProVo.getLabel(),null);
+        return environment;
     }
 
-    private RestTemplate getSecureRestTemplate(ConfigClientProperties client) {
+    private RestTemplate getSecureRestTemplate(ConfigServerProVo client) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setReadTimeout(185000);
         RestTemplate template = new RestTemplate(requestFactory);
@@ -62,14 +66,14 @@ public class GenConfigServerProperties {
     }
 
     private org.springframework.cloud.config.environment.Environment getRemoteEnvironment(RestTemplate restTemplate,
-                                                                                          ConfigClientProperties properties,
+                                                                                          ConfigServerProVo properties,
                                                                                           String label,
                                                                                           String state) {
         String path = "/{name}/{profile}";
         String name = properties.getName();
         String profile = properties.getProfile();
         String token = properties.getToken();
-        String uri = properties.getRawUri();
+        String uri = properties.getUri();
         String[] args = new String[] { name, profile };
         if (StringUtils.hasText(label)) {
             args = new String[] { name, profile, label };
@@ -106,6 +110,61 @@ public class GenConfigServerProperties {
         }
     }
 
+    private String getServerUrl(String serviceName) {
+        com.ecwid.consul.v1.ConsulClient client = new com.ecwid.consul.v1.ConsulClient(
+            "http://localhost", 8500);
+
+        Response<List<HealthService>> healthyServices = client.getHealthServices(serviceName, true,
+            QueryParams.DEFAULT);
+
+        if (healthyServices.getValue().size() <= 0) {
+            throw new RuntimeException("can't fine service :[" + serviceName + "]");
+        }
+        HealthService healthService = healthyServices.getValue().get(0);
+
+        String url = "http://" + healthService.getService().getAddress() + ":"
+                     + healthService.getService().getPort();
+
+        return url;
+
+        //System.out.println(url);
+
+    }
+
+    private ConfigServerProVo getconfigServerProVo(){
+        try {
+            Yaml yaml = new Yaml();
+            Map<String, Map<String,Map<String,String>>> contactMap = yaml.loadAs(
+                    this.getClass().getClassLoader().getResourceAsStream("bootstrap.yml"), Map.class);
+            Map  map= (Map)contactMap.get("spring");
+            Map  map2=(Map)map.get("cloud");
+            Map  map3=(Map) map2.get("config");
+            String name=  (String)map3.get("name");
+            String profile=  (String)map3.get("profile");
+            String label=  (String)map3.get("label");
+            Map  cofigserverinfoMap=  (Map)map3.get("discovery");
+            String configserverid=  (String)cofigserverinfoMap.get("serviceId");
+
+            String serverurl=getServerUrl(configserverid);
+
+            ConfigServerProVo configClientProperties = new ConfigServerProVo();
+            configClientProperties.setLabel(label);
+            configClientProperties.setProfile(profile);
+            configClientProperties.setName(name);
+            configClientProperties.setUri(serverurl);
+            return  configClientProperties;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  null;
+    }
+
     // org.springframework.cloud.config.environment.Environment result = this.getRemoteEnvironment(restTemplate, properties, label.trim(), state);
+
+    public  static  void main(String args[]){
+        Environment  environment=  new GenConfigServerProperties().getCommonProperties();
+        System.out.println(environment);
+    }
+
 
 }
