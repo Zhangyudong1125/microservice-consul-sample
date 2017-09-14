@@ -114,7 +114,6 @@ public class GenConfigServerProperties {
     private String getServerUrl(String serviceName) {
         com.ecwid.consul.v1.ConsulClient client = new com.ecwid.consul.v1.ConsulClient(
             "http://localhost", 8500);
-
         Response<List<HealthService>> healthyServices = client.getHealthServices(serviceName, true,
             QueryParams.DEFAULT);
 
@@ -140,8 +139,7 @@ public class GenConfigServerProperties {
             Map  map= (Map)contactMap.get("spring");
             Map applicationNameMap=(Map)map.get("application");
             String appName=(String)applicationNameMap.get("name");
-           // String profile = System.getProperty("spring.cloud.consul.discovery.tags");
-
+            //String profile = System.getProperty("spring.cloud.consul.discovery.tags");
             //-Dserver.port=3088 -Dswagger.enabled=true -Dspring.cloud.consul.discovery.tags=dev
 
 
