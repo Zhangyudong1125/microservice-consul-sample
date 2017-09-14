@@ -12,6 +12,7 @@ import com.ecwid.consul.v1.health.model.HealthService;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.cloud.config.client.ConfigServicePropertySourceLocator;
 import org.springframework.cloud.config.environment.Environment;
+import org.springframework.cloud.config.environment.PropertySource;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -137,10 +138,17 @@ public class GenConfigServerProperties {
             Map<String, Map<String,Map<String,String>>> contactMap = yaml.loadAs(
                     this.getClass().getClassLoader().getResourceAsStream("bootstrap.yml"), Map.class);
             Map  map= (Map)contactMap.get("spring");
+            Map applicationNameMap=(Map)map.get("application");
+            String appName=(String)applicationNameMap.get("name");
+           // String profile = System.getProperty("spring.cloud.consul.discovery.tags");
+
+            //-Dserver.port=3088 -Dswagger.enabled=true -Dspring.cloud.consul.discovery.tags=dev
+
+
             Map  map2=(Map)map.get("cloud");
             Map  map3=(Map) map2.get("config");
-            String name=  (String)map3.get("name");
-            String profile=  (String)map3.get("profile");
+            String name="common";//  (String)map3.get("name");
+            String profile= "dev";// (String)map3.get("profile");
             String label=  (String)map3.get("label");
             Map  cofigserverinfoMap=  (Map)map3.get("discovery");
             String configserverid=  (String)cofigserverinfoMap.get("serviceId");
@@ -164,6 +172,13 @@ public class GenConfigServerProperties {
     public  static  void main(String args[]){
         Environment  environment=  new GenConfigServerProperties().getCommonProperties();
         System.out.println(environment);
+        PropertySource propertySource= environment.getPropertySources().get(0);
+        propertySource.getSource().entrySet().forEach(item->{
+
+        });
+        System.out.println(propertySource);
+
+
     }
 
 
