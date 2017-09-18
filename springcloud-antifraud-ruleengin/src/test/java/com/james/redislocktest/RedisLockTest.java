@@ -2,16 +2,16 @@
  * Truderal.com.cn Inc.
  * Copyright (c) 2016-2017 All Rights Reserved.
  */
-package com.james.test.redislocktest;
+package com.james.redislocktest;
 
-import com.james.test.TestBase;
-import lombok.extern.slf4j.Slf4j;
+import com.james.TestBase;
 import org.junit.Test;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.TimeoutUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +37,7 @@ public class RedisLockTest extends TestBase {
         try {
             lock.lock();
             log.info("Request Thread - " + counter + "[" + serverId + "] locked and begun...");
-            Thread.sleep(5000); // 5 sec
+            Thread.sleep(3000); // 3 sec
             log.info("Request Thread - " + counter + "[" + serverId + "] ended successfully...");
         } catch (Exception ex) {
             log.error("Error occurred");
@@ -46,6 +46,5 @@ public class RedisLockTest extends TestBase {
             log.info("Request Thread - " + counter + "[" + serverId + "] unlocked...");
         }
         log.info("lock-" + counter + "[" + serverId + "]");
-        //return "lock-" + counter + "[" + serverId + "]";
     }
 }
