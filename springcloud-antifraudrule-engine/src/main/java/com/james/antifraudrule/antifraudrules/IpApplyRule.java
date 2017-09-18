@@ -2,28 +2,27 @@
  * Truderal.com.cn Inc.
  * Copyright (c) 2016-2017 All Rights Reserved.
  */
-package com.james.antifraud.antifraudrules;
+package com.james.antifraudrule.antifraudrules;
 
-import com.james.antifraud.dto.ruleresdto.RiskRuleResDto;
-import com.james.antifraud.dto.variablevo.IpApplyInfo;
+import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
+import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
 import org.easyrules.annotation.Action;
 import org.easyrules.annotation.Condition;
 import org.easyrules.annotation.Rule;
-
-import com.google.common.base.Strings;
-import com.james.antifraud.antifraudrules.abs.AbsAntiFraudRule;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Strings;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author militang
  * @version Id: IpRegRule.java, v 0.1 17/9/15 下午5:31 militang Exp $$
  */
 
-//@Rule(name = "ip,IP集中注册或申请次数限制")
+@Rule(name = "ip,IP集中注册或申请次数限制")
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -33,43 +32,8 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
 
     private T       result;
 
-
-
-    @Action
-    public void then() throws Exception {
-
-    }
-
-    public boolean isExecuted() {
-        return executed;
-    }
-
-    public T getResult() {
-        return result;
-    }
-
-    @Override
-    protected String getRuleid() {
-        return "G00101";
-    }
-
-    @Override
-    public String getName() {
-        return "IP集中注册或申请次数限制";
-    }
-
-    @Override
-    public String getDescription() {
-        return "IP集中注册或申请次数限制";
-    }
-
-    @Override
-    public int getPriority() {
-        return 0;
-    }
-
-    @Override
-    public boolean evaluate() {
+    @Condition
+    public boolean when() {
         String ip = super.getIp();
         if (Strings.isNullOrEmpty(ip)) {
             log.info("IpRegRule  can't get ip");
@@ -80,12 +44,12 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
 
         Integer h12 = 8;
 
-        Integer h72 = 19;
+        Integer h72 = 39;
 
-        if (h12 >= 20) {
+        if (h3 >= 10) {
             return true;
         }
-        if (h3 >= 10) {
+        if (h12 >= 20) {
             return true;
         }
         if (h72 >= 30) {
@@ -101,7 +65,7 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
         if (appliedInfo12.getCnt() >= 20) {
             return true;
         }
-
+        
         IpApplyInfo.AppliedInfo appliedInfo72 = ipApplyInfo.getIpreginfos().get(new Integer(72));
         if (appliedInfo72.getCnt() >= 30) {
             return true;
@@ -109,10 +73,10 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
         return false;
     }
 
-    @Override
-    public void execute() throws Exception {
+    @Action
+    public void then() throws Exception {
         try {
-            log.info("IpReRule has been executed");
+            log.info("IpRegRule has been executed");
             RiskRuleResDto riskRuleResDto = new RiskRuleResDto();
             riskRuleResDto.setRuleid(getRuleid());
             riskRuleResDto.setRuledesc("触发 IP集中注册或申请次数限制 规则");
@@ -122,6 +86,18 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
             // executed flag will remain false if an exception occurs
             throw e;
         }
+    }
 
+    public boolean isExecuted() {
+        return executed;
+    }
+
+    public T getResult() {
+        return result;
+    }
+
+    @Override
+    protected String getRuleid() {
+        return "G00101";
     }
 }

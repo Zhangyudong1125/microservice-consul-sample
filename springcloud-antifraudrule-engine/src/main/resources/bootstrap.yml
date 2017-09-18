@@ -1,0 +1,17 @@
+spring:
+ application:
+   name: springcloud-antifraud-ruleengin
+ cloud:
+   consul:
+     host: localhost
+     port: 8500
+     discovery:
+        healthCheckUrl: http://localhost:${server.port}/health
+        #health-check-path: /health
+        healthCheckInterval: 15s
+        instance-id: springcloud-antifraud-ruleengin
+
+
+management:
+ security:
+   enabled: false

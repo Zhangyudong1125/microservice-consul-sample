@@ -2,15 +2,16 @@
  * Truderal.com.cn Inc.
  * Copyright (c) 2016-2017 All Rights Reserved.
  */
-package com.james.antifraud.antifraudrules.abs;
+package com.james.antifraudrule.antifraudrules.abs;
 
-import com.james.antifraud.dto.antifraudbizreqdto.AntiFraudObj;
-
-import lombok.Data;
+import com.james.antifraudrule.dto.antifraudbizreqdto.AntiFraudObj;
 import org.easyrules.api.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+
+import lombok.Data;
 
 /**
  * @author militang
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-public abstract class AbsAntiFraudRule<T> implements Rule {
+public abstract class AbsAntiFraudRule<T>  {
 
     @Autowired
     protected RedisTemplate  redisTemplate;
