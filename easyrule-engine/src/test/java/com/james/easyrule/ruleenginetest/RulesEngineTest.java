@@ -9,17 +9,22 @@ import org.easyrules.api.RulesEngine;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 /**
  * @author militang
  * @version Id: RulesEngineTest.java, v 0.1 17/9/11 下午4:38 militang Exp $$
  */
 public class RulesEngineTest extends TestBase {
     @Autowired
+    private RulesEngine rullesEngine;
+
+    @Autowired
     private RulesEngine rulesEngine;
 
     @Test
     public void runtest() {
+        rullesEngine.fireRules();
         rulesEngine.fireRules();
     }
+
+
 }

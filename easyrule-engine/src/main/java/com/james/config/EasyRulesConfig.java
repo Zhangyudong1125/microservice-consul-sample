@@ -6,10 +6,12 @@ package com.james.config;
 
 import org.easyrules.api.RulesEngine;
 import org.easyrules.core.RulesEngineBuilder;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.james.ruleengine.springrules.DummyRule;
+import org.springframework.context.annotation.Scope;
 
 /**
  * @author militang
@@ -19,6 +21,7 @@ import com.james.ruleengine.springrules.DummyRule;
 public class EasyRulesConfig {
 
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DummyRule rule() {
         return new DummyRule();
     }
@@ -27,11 +30,19 @@ public class EasyRulesConfig {
     //    bean id="rule"class="samples.spring.DummyRule"scope="prototype"/>
 
     @Bean
-    public RulesEngine rulesEngine() {
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public RulesEngine rullesEngine() {
         RulesEngine rulesEngine = RulesEngineBuilder.aNewRulesEngine().build();//.getObject();//  rulesEngineFactoryBean
         rulesEngine.registerRule(rule());
-        return  rulesEngine;
+        return rulesEngine;
     }
 
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public RulesEngine rulesEngine() {
+        RulesEngine rulesEngine = RulesEngineBuilder.aNewRulesEngine().build();//.getObject();//  rulesEngineFactoryBean
+        //rulesEngine.registerRule(rule());
+        return rulesEngine;
+    }
 
 }

@@ -15,6 +15,7 @@
         <module>easyrule-engine</module>
         <module>springcloud-redislock</module>
         <module>common-yaml</module>
+        <module>springcloud-antifraud-ruleengin</module>
     </modules>
 
     <parent>

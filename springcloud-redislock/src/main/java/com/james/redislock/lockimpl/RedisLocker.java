@@ -22,7 +22,7 @@ public class RedisLocker implements DistributedLocker {
     private final static String LOCKER_PREFIX = "lock:";
 
     @Autowired
-    RedissonConnector           redissonConnector;
+    RedissonClient              redissonClient;
 
     @Override
     public <T> T lock(String resourceName, AquiredLockWorker<T> worker) throws InterruptedException,
@@ -34,8 +34,8 @@ public class RedisLocker implements DistributedLocker {
     @Override
     public <T> T lock(String resourceName, AquiredLockWorker<T> worker,
                       int lockTime) throws UnableToAquireLockException, Exception {
-        RedissonClient redisson = redissonConnector.getClient();
-        RLock lock = redisson.getLock(LOCKER_PREFIX + resourceName);
+        //RedissonClient redisson = redissonConnector.getClient();
+        RLock lock = redissonClient.getLock(LOCKER_PREFIX + resourceName);
         // Wait for 100 seconds seconds and automatically unlock it after lockTime seconds
         boolean success = lock.tryLock(100, lockTime, TimeUnit.SECONDS);
         if (success) {
