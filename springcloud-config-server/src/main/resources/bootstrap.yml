@@ -1,3 +1,4 @@
+# spring.cloud.consul.discovery.registe
 spring:
  application:
    name: springcloud-config-server
@@ -10,6 +11,7 @@ spring:
         #health-check-path: /health
         healthCheckInterval: 15s
         instance-id: springcloud-config-server
+        #enabled:
    config:
      server:
         git:
