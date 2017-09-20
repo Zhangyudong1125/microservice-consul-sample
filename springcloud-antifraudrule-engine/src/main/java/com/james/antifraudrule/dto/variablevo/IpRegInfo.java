@@ -24,4 +24,7 @@ public class IpRegInfo {
         int hours;
         int cnt;
     }
+
+
+
 }

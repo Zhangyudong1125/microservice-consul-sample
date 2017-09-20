@@ -8,7 +8,7 @@ import com.james.antifraud.TestBase;
 import com.james.antifraudrule.dto.antifraudbizreqdto.AntiFraudObj;
 import com.james.antifraudrule.dto.antifraudbizreqdto.Location;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
-import com.james.antifraudrule.service.AntiFraudRuleCheck;
+import com.james.antifraudrule.component.AntiFraudRuleCheck;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

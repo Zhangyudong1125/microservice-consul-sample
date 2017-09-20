@@ -13,16 +13,17 @@ import lombok.Setter;
  */
 public enum AntiFraudTypeEnum {
 
+    REG_EVENT("注册事件", "PAY.REG"),
+
     LOGIN_EVENT("登录事件", "PAY.LOGIN"),
 
     AUTHAPPLY_EVENT("授信申请", "PAY.APPLY"),
 
-    REG_EVENT("注册事件", "PAY.REG"),
+    ACTIVE_EVENT("激活事件", ""),
 
     AUTH_EVENT_NO_FEE("授权事件免费","PAY.AUTH1"),
-    AUTH_EVENT_FEE("授权事件收费","PAY.AUTH2"),
 
-    ACTIVE_EVENT("激活事件", ""),
+    AUTH_EVENT_FEE("授权事件收费","PAY.AUTH2"),
 
     WITHDRAW_EVENT("提现事件", "PAY.WITHDRAW"),
 

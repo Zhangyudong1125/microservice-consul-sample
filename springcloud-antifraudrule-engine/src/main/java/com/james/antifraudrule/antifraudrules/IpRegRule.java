@@ -6,6 +6,7 @@ package com.james.antifraudrule.antifraudrules;
 
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
 import com.james.antifraudrule.component.RedisWindows;
+import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
 import com.james.antifraudrule.dto.variablevo.IpRegInfo;
 import com.james.antifraudrule.enums.AntiFraudTypeEnum;
 import org.easyrules.annotation.Action;
@@ -68,7 +69,10 @@ public class IpRegRule<T> extends AbsAntiFraudRule {
     public void then() throws Exception {
         try {
             log.info("IpRegRules has been executed");
-            result = null; // assign your result here
+            RiskRuleResDto riskRuleResDto = new RiskRuleResDto();
+            riskRuleResDto.setRuleid(getRuleid());
+            riskRuleResDto.setRuledesc("触发 IP集中注册或申请次数限制 规则");
+            result = (T) riskRuleResDto; // assign your result here
             executed = true;
         } catch (Exception e) {
             // executed flag will remain false if an exception occurs

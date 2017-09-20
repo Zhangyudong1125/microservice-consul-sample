@@ -5,10 +5,13 @@
 package com.james.antifraudrule.antifraudrules;
 
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
+import com.james.antifraudrule.component.RedisWindows;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
+import com.james.antifraudrule.enums.AntiFraudTypeEnum;
 import org.easyrules.annotation.Action;
 import org.easyrules.annotation.Condition;
 import org.easyrules.annotation.Rule;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,13 +27,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Rule(name = "ip,IP集中注册或申请次数限制")
 @Slf4j
-@Component
+@Component("G00110")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IpApplyRule<T> extends AbsAntiFraudRule {
 
-    private boolean executed;
+    private boolean      executed;
 
-    private T       result;
+    private T            result;
+
+    @Autowired
+    private RedisWindows redisWindows;
 
     @Condition
     public boolean when() {
@@ -40,21 +46,22 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
             return true;
         }
 
-        Integer h3 = 2;//(Integer) redisTemplate.opsForValue().get(ip);
-
-        Integer h12 = 8;
-
-        Integer h72 = 39;
-
-        if (h3 >= 10) {
+        int applyinof3 = redisWindows.hoursCnt(3, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
+        if (applyinof3 >= 10) {
             return true;
         }
-        if (h12 >= 20) {
+
+        int applyinof12 = redisWindows.hoursCnt(12, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
+        if (applyinof12 >= 20) {
             return true;
         }
-        if (h72 >= 30) {
+
+        int applyinof72 = redisWindows.hoursCnt(72, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
+        if (applyinof72 >= 30) {
             return true;
         }
+
+
         //IpApplyInfo ipApplyInfo = (IpApplyInfo) super.variable;
 
         /* IpApplyInfo.AppliedInfo appliedInfo3 = ipApplyInfo.getIpreginfos().get(new Integer(3));

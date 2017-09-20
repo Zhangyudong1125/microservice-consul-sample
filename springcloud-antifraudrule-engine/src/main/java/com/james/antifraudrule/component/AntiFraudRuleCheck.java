@@ -2,15 +2,12 @@
  * Truderal.com.cn Inc.
  * Copyright (c) 2016-2017 All Rights Reserved.
  */
-package com.james.antifraudrule.service;
+package com.james.antifraudrule.component;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.james.antifraudrule.antifraudrules.IpApplyRule;
-import com.james.antifraudrule.antifraudrules.IpRegRule;
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
 import com.james.antifraudrule.dto.antifraudbizreqdto.AntiFraudObj;
-import com.james.antifraudrule.dto.antifraudbizreqdto.Location;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
 import lombok.extern.slf4j.Slf4j;
 import org.easyrules.api.RulesEngine;
@@ -18,7 +15,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
@@ -27,7 +24,7 @@ import java.util.Set;
  * @author militang
  * @version Id: AntiFraudRuleCheck.java, v 0.1 17/9/18 下午9:59 militang Exp $$
  */
-@Service
+@Component
 @Slf4j
 public class AntiFraudRuleCheck implements ApplicationContextAware {
 
@@ -37,6 +34,7 @@ public class AntiFraudRuleCheck implements ApplicationContextAware {
     private static Set<String> ruleidset = Sets.newHashSet();
     static {
         ruleidset.add("G00101");
+        ruleidset.add("G00110");
     }
 
     private ApplicationContext ctx;
