@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class AntiFraudActionAccumulate {
 
     @Autowired
-    RedissonClient redissonClient;
+    RedissonClient        redissonClient;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -50,15 +50,14 @@ public class AntiFraudActionAccumulate {
             eventDayAccumulate(action, contractNo, city, "city", 30);
             //录设备非近30天TOP2常登录设备
             eventDayAccumulate(action, contractNo, devicePrint, "devicePrint", 30);
-           /*申请时所用IP近3小时注册或申请用户数≥10
+            /*申请时所用IP近3小时注册或申请用户数≥10
              申请时所用IP近12小时注册或申请用户数≥20
              申请时所用IP近72小时注册或申请用户数≥30*/
             eventHourAccumulate(action, null, ip, "ip", 72);
-             /*申请时使用设备近12小时登录用户数≥2
-               申请时使用设备近7天登录用户数≥3*/
+            /*申请时使用设备近12小时登录用户数≥2
+              申请时使用设备近7天登录用户数≥3*/
             eventHourAccumulate(action, null, devicePrint, "devicePrint", 168);
         }
-
 
         if (action.equals(AntiFraudTypeEnum.REG_EVENT.name())) {
             //申请时所用IP近72小时注册或申请用户数≥30
@@ -66,7 +65,7 @@ public class AntiFraudActionAccumulate {
         }
 
         if (action.equals(AntiFraudTypeEnum.AUTHAPPLY_EVENT.name())) {
- /*           申请时使用设备近3小时申贷用户数≥2
+            /*           申请时使用设备近3小时申贷用户数≥2
             申请时使用设备近7天申贷用户数≥3*/
             eventHourAccumulate(action, null, devicePrint, "devicePrint", 168);
             eventHourAccumulate(action, null, ip, "ip", 72);
@@ -74,14 +73,14 @@ public class AntiFraudActionAccumulate {
 
     }
 
-    private void eventHourAccumulate(String action, String contractNo, String mark, String markName, int longterm) {
-        int windowTimehrss = Long.valueOf(System.currentTimeMillis() / 1000 / (3600))
-                .intValue();
+    private void eventHourAccumulate(String action, String contractNo, String mark, String markName,
+                                     int longterm) {
+        int windowTimehrss = Long.valueOf(System.currentTimeMillis() / 1000 / (3600)).intValue();
         String contentKey = action + ":";
         if (!Strings.isNullOrEmpty(contractNo)) {
             contentKey = contentKey + contractNo + ":";
         }
-        contentKey = contentKey + markName;
+        contentKey = contentKey + markName + ":" + mark;
 
         RLock lock = redissonClient.getLock(contentKey);
         try {
@@ -89,7 +88,7 @@ public class AntiFraudActionAccumulate {
             //申请时点登录IP所在城市非近30天TOP2常用登录地且登录设备非近30天TOP2常登录设备
             //   if (redisTemplate.opsForSet().isMember(cityloginkey,))
 
-            String convalue_pre = mark + ":" + windowTimehrss + ":";
+            String convalue_pre = markName + ":" + mark + ":" + windowTimehrss + ":";
             //Set<String> set = redisTemplate.opsForSet().members(cityloginkey);
 
             Set<String> set = redisTemplate.opsForZSet().range(contentKey, 0, -1);
@@ -103,7 +102,7 @@ public class AntiFraudActionAccumulate {
                     loginRec.increascnt();
                     redisTemplate.opsForZSet().remove(contentKey, loingstr);
                     redisTemplate.opsForZSet().add(contentKey, loginRec.toSetString(),
-                            loginRec.getCnt());
+                        loginRec.getCnt());
                     redisTemplate.expire(contentKey, longterm, TimeUnit.HOURS);
                     iscontain = true;
                 }
@@ -123,19 +122,19 @@ public class AntiFraudActionAccumulate {
 
     }
 
-    private void eventDayAccumulate(String action, String contractNo, String mark,
-                                    String markName, int daycnt) {
+    private void eventDayAccumulate(String action, String contractNo, String mark, String markName,
+                                    int daycnt) {
         int windowTimeDays = Long.valueOf(System.currentTimeMillis() / 1000 / (3600 * 24))
-                .intValue();
+            .intValue();
         //String cityloginkey = action + ":" + contractNo + ":" + markName;
-        String cityloginkey = action + ":";
+
+        String contentKey = action + ":";
         if (!Strings.isNullOrEmpty(contractNo)) {
-            cityloginkey = cityloginkey + contractNo + ":";
+            contentKey = contentKey + contractNo + ":";
         }
-        cityloginkey = cityloginkey + markName;
+        contentKey = contentKey + markName + ":" + mark;
 
-
-        RLock lock = redissonClient.getLock(cityloginkey);
+        RLock lock = redissonClient.getLock(contentKey);
         try {
             lock.lock();
             //申请时点登录IP所在城市非近30天TOP2常用登录地且登录设备非近30天TOP2常登录设备
@@ -144,27 +143,26 @@ public class AntiFraudActionAccumulate {
             String convalue_pre = mark + ":" + windowTimeDays + ":";
             //Set<String> set = redisTemplate.opsForSet().members(cityloginkey);
 
-            Set<String> set = redisTemplate.opsForZSet().range(cityloginkey, 0, -1);
+            Set<String> set = redisTemplate.opsForZSet().range(contentKey, 0, -1);
 
             boolean iscontain = false;
             for (String loingstr : set) {
                 LoginRec loginRec = new LoginRec(loingstr);
                 if (loginRec.getTimeslong() + daycnt < windowTimeDays) {
-                    redisTemplate.opsForZSet().remove(cityloginkey, loingstr);
+                    redisTemplate.opsForZSet().remove(contentKey, loingstr);
                 } else if (loingstr.startsWith(convalue_pre)) {
                     loginRec.increascnt();
-                    redisTemplate.opsForZSet().remove(cityloginkey, loingstr);
-                    redisTemplate.opsForZSet().add(cityloginkey, loginRec.toSetString(),
-                            loginRec.getCnt());
-                    redisTemplate.expire(cityloginkey, daycnt, TimeUnit.DAYS);
+                    redisTemplate.opsForZSet().remove(contentKey, loingstr);
+                    redisTemplate.opsForZSet().add(contentKey, loginRec.toSetString(),
+                        loginRec.getCnt());
+                    redisTemplate.expire(contentKey, daycnt, TimeUnit.DAYS);
                     iscontain = true;
                 }
-
             }
             if (!iscontain) {
                 convalue_pre = convalue_pre + "1";
-                redisTemplate.opsForZSet().add(cityloginkey, convalue_pre, 1);
-                redisTemplate.expire(cityloginkey, daycnt, TimeUnit.DAYS);
+                redisTemplate.opsForZSet().add(contentKey, convalue_pre, 1);
+                redisTemplate.expire(contentKey, daycnt, TimeUnit.DAYS);
             }
 
         } catch (Exception ex) {
