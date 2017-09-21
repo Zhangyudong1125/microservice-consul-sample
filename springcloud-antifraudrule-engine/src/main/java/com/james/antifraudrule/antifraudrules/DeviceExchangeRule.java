@@ -31,15 +31,8 @@ import java.util.Set;
 public class DeviceExchangeRule<T> extends AbsAntiFraudRule {
 
 
-    @Override
-    public boolean isExecuted() {
-        return false;
-    }
 
-    @Override
-    public T getResult() {
-        return (T)result;
-    }
+
 
     @Condition
     public boolean when() {

@@ -70,13 +70,9 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
         }
     }
 
-    public boolean isExecuted() {
-        return executed;
-    }
 
-    public T getResult() {
-        return (T) result;
-    }
+
+
 
 
 }

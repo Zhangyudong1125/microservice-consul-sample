@@ -21,29 +21,33 @@ import lombok.Data;
 @Component
 public abstract class AbsAntiFraudRule<T> {
 
-    protected boolean       executed;
+    protected boolean executed;
 
-    protected T             result;
+    protected T       result;
+
+    public boolean isExecuted() {
+        return executed;
+    }
 
     @Autowired
     protected RedisTemplate redisTemplate;
 
+    public T getResult() {
+        return (T) result;
+    }
+
     /**
      * 风控探针的参数传入
      */
-    protected AntiFraudObj  antiFraudObj;
+    protected AntiFraudObj antiFraudObj;
 
-    public Object           variable;
+    public Object          variable;
 
     protected String getRuleid() {
         Component component = this.getClass().getAnnotation(Component.class);
         String ruleid = component.value();
         return ruleid;
     }
-
-    public abstract boolean isExecuted();
-
-    public abstract T getResult();
 
     protected String getIp() {
         return antiFraudObj.getLocation().getIp();

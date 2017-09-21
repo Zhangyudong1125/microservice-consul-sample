@@ -39,15 +39,8 @@ public class DeviceLoginRule<T> extends AbsAntiFraudRule {
 
 
 
-    @Override
-    public boolean isExecuted() {
-        return false;
-    }
 
-    @Override
-    public Object getResult() {
-        return (T) result;
-    }
+
 
     @Condition
     public boolean when() {

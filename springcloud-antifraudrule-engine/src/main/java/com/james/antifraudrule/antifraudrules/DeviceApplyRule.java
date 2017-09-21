@@ -34,15 +34,7 @@ public class DeviceApplyRule<T> extends AbsAntiFraudRule {
     private DeviceRuleChkComponent deviceRuleChkComponent;
 
 
-    @Override
-    public boolean isExecuted() {
-        return false;
-    }
 
-    @Override
-    public T getResult() {
-        return (T) result;
-    }
 
     @Condition
     public boolean when() {

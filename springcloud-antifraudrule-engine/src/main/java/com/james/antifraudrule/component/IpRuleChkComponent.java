@@ -53,4 +53,37 @@ public class IpRuleChkComponent {
         }
         return false;
     }
+
+    public boolean ipRuleCheckHighRiskArea(String contentKey) {
+        Set<String> ipApplySet = redisTemplate.opsForZSet().range(contentKey, 0, -1);
+
+        //滑窗单位为小时
+        int windowTimeHours = Long.valueOf(System.currentTimeMillis() / 1000 / 3600).intValue();
+        int applyinof3 = 0;
+        int applyinof12 = 0;
+        int applyinof72 = 0;
+        for (String contentstr : ipApplySet) {
+            ContentRec loginRec = new ContentRec(contentstr);
+            if (windowTimeHours >= loginRec.getTimeslong() - 3) {
+                applyinof3 = applyinof3 + loginRec.getCnt();
+                if (applyinof3 >= 3) {
+                    return true;
+                }
+            }
+            if (windowTimeHours >= loginRec.getTimeslong() - 12) {
+                applyinof12 = applyinof12 + loginRec.getCnt();
+                if (applyinof12 >= 5) {
+                    return true;
+                }
+            }
+            if (windowTimeHours >= loginRec.getTimeslong() - 72) {
+                applyinof72 = applyinof72 + loginRec.getCnt();
+                if (applyinof72 >= 10) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
 }

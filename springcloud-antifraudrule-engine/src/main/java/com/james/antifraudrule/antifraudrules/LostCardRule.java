@@ -4,41 +4,36 @@
  */
 package com.james.antifraudrule.antifraudrules;
 
+import com.google.common.base.Strings;
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
 import com.james.antifraudrule.component.IpRuleChkComponent;
-import com.james.antifraudrule.component.RedisWindows;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
-import com.james.antifraudrule.dto.variablevo.ContentRec;
-import com.james.antifraudrule.dto.variablevo.IpRegInfo;
 import com.james.antifraudrule.enums.AntiFraudTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.easyrules.annotation.Action;
 import org.easyrules.annotation.Condition;
 import org.easyrules.annotation.Rule;
-
-import com.google.common.base.Strings;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-
 /**
  * @author militang
- * @version Id: IpRegRule.java, v 0.1 17/9/15 下午5:31 militang Exp $$
+ * @version Id: LostCardRule.java, v 0.1 17/9/21 下午4:53 militang Exp $$
  */
 
-@Rule(name = "ip,IP集中注册或申请")
+@Rule(name = "盗卡地区IP集中")
 @Slf4j
-@Component("G00101")
+@Component("G00112")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class IpRegRule<T> extends AbsAntiFraudRule {
+public class LostCardRule<T> extends AbsAntiFraudRule {
 
     @Autowired
     private IpRuleChkComponent ipRuleChkComponent;
 
+
+    @Override
     @Condition
     public boolean when() {
         String ip = super.getIp();
@@ -46,22 +41,25 @@ public class IpRegRule<T> extends AbsAntiFraudRule {
             log.info("IpRegRule  can't get ip");
             return true;
         }
-        String contentKey = AntiFraudTypeEnum.REG_EVENT.name() + ":ip:" + ip;
-        //String contentKey = "LOGN_EVENT:86000000000110:devicePrint:ABS87DJJR777D"  action + ":contractNo:"+markName + ":" + mark;*/;
-        //String convalue = "fingerprint:ABS87DJJR777D:677637763:6";
+        String city = super.antiFraudObj.getLocation().getCity();
+
+        //// TODO: 17/9/21 获取高危城市
+        String contentKey = AntiFraudTypeEnum.AUTHAPPLY_EVENT.name() + ":ip:" + ip;
         if (ipRuleChkComponent.ipRuleCheck(contentKey)) {
             return true;
         }
+
         return false;
     }
 
+    @Override
     @Action
     public void then() throws Exception {
         try {
-            log.info("IpRegRules has been executed");
+            log.info("LostCardRule has been executed");
             RiskRuleResDto riskRuleResDto = new RiskRuleResDto();
             riskRuleResDto.setRuleid(getRuleid());
-            riskRuleResDto.setRuledesc("触发 IP集中注册或申请次数限制 规则");
+            riskRuleResDto.setRuledesc("触发 盗卡地区IP集中 规则");
             result = (T) riskRuleResDto; // assign your result here
             executed = true;
         } catch (Exception e) {
@@ -69,8 +67,4 @@ public class IpRegRule<T> extends AbsAntiFraudRule {
             throw e;
         }
     }
-
-
-
-
 }

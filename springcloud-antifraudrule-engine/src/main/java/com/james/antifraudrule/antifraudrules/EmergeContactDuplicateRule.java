@@ -30,15 +30,9 @@ import java.util.Set;
 public class EmergeContactDuplicateRule<T> extends AbsAntiFraudRule {
 
 
-    @Override
-    public boolean isExecuted() {
-        return false;
-    }
 
-    @Override
-    public Object getResult() {
-        return (T) result;
-    }
+
+
 
     @Override
     @Condition
