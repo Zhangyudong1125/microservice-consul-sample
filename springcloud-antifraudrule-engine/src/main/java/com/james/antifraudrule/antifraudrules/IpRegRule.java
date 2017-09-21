@@ -5,8 +5,10 @@
 package com.james.antifraudrule.antifraudrules;
 
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
+import com.james.antifraudrule.component.IpRuleChkComponent;
 import com.james.antifraudrule.component.RedisWindows;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
+import com.james.antifraudrule.dto.variablevo.ContentRec;
 import com.james.antifraudrule.dto.variablevo.IpRegInfo;
 import com.james.antifraudrule.enums.AntiFraudTypeEnum;
 import org.easyrules.annotation.Action;
@@ -21,6 +23,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 /**
  * @author militang
  * @version Id: IpRegRule.java, v 0.1 17/9/15 下午5:31 militang Exp $$
@@ -33,31 +37,21 @@ import org.springframework.stereotype.Component;
 public class IpRegRule<T> extends AbsAntiFraudRule {
 
     @Autowired
-    private RedisWindows redisWindows;
+    private IpRuleChkComponent ipRuleChkComponent;
 
     @Condition
     public boolean when() {
         String ip = super.getIp();
         if (Strings.isNullOrEmpty(ip)) {
-            log.info("IpRegRules  can't get ip");
+            log.info("IpRegRule  can't get ip");
             return true;
         }
-
-        int regedinof3 = redisWindows.hoursCnt(3, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
-        if (regedinof3 >= 10) {
+        String contentKey = AntiFraudTypeEnum.REG_EVENT.name() + ":ip:" + ip;
+        //String contentKey = "LOGN_EVENT:86000000000110:devicePrint:ABS87DJJR777D"  action + ":contractNo:"+markName + ":" + mark;*/;
+        //String convalue = "fingerprint:ABS87DJJR777D:677637763:6";
+        if (ipRuleChkComponent.ipRuleCheck(contentKey)) {
             return true;
         }
-
-        int regedinof12 = redisWindows.hoursCnt(12, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
-        if (regedinof12 >= 10) {
-            return true;
-        }
-
-        int regedinof72 = redisWindows.hoursCnt(72, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
-        if (regedinof72 >= 10) {
-            return true;
-        }
-
         return false;
     }
 
@@ -82,11 +76,6 @@ public class IpRegRule<T> extends AbsAntiFraudRule {
 
     public T getResult() {
         return (T) result;
-    }
-
-    @Override
-    protected String getRuleid() {
-        return "G00101";
     }
 
 }

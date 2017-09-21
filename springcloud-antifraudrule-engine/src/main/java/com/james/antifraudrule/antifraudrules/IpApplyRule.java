@@ -5,8 +5,10 @@
 package com.james.antifraudrule.antifraudrules;
 
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
+import com.james.antifraudrule.component.IpRuleChkComponent;
 import com.james.antifraudrule.component.RedisWindows;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
+import com.james.antifraudrule.dto.variablevo.ContentRec;
 import com.james.antifraudrule.enums.AntiFraudTypeEnum;
 import org.easyrules.annotation.Action;
 import org.easyrules.annotation.Condition;
@@ -20,6 +22,8 @@ import com.google.common.base.Strings;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Set;
+
 /**
  * @author militang
  * @version Id: IpRegRule.java, v 0.1 17/9/15 下午5:31 militang Exp $$
@@ -31,10 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IpApplyRule<T> extends AbsAntiFraudRule {
 
-
-
     @Autowired
-    private RedisWindows redisWindows;
+    private IpRuleChkComponent ipRuleChkComponent;
 
     @Condition
     public boolean when() {
@@ -43,38 +45,13 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
             log.info("IpRegRule  can't get ip");
             return true;
         }
+        String contentKey = AntiFraudTypeEnum.AUTHAPPLY_EVENT.name() + ":ip:" + ip;
+        //String contentKey = "LOGN_EVENT:86000000000110:devicePrint:ABS87DJJR777D"  action + ":contractNo:"+markName + ":" + mark;*/;
+        //String convalue = "fingerprint:ABS87DJJR777D:677637763:6";
 
-        int applyinof3 = redisWindows.hoursCnt(3, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
-        if (applyinof3 >= 10) {
+        if (ipRuleChkComponent.ipRuleCheck(contentKey)) {
             return true;
         }
-
-        int applyinof12 = redisWindows.hoursCnt(12, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
-        if (applyinof12 >= 20) {
-            return true;
-        }
-
-        int applyinof72 = redisWindows.hoursCnt(72, AntiFraudTypeEnum.REG_EVENT.name() + ":" + ip);
-        if (applyinof72 >= 30) {
-            return true;
-        }
-
-
-        //IpApplyInfo ipApplyInfo = (IpApplyInfo) super.variable;
-
-        /* IpApplyInfo.AppliedInfo appliedInfo3 = ipApplyInfo.getIpreginfos().get(new Integer(3));
-        if (appliedInfo3.getCnt() >= 10) {
-            return true;
-        }
-        IpApplyInfo.AppliedInfo appliedInfo12 = ipApplyInfo.getIpreginfos().get(new Integer(12));
-        if (appliedInfo12.getCnt() >= 20) {
-            return true;
-        }
-        
-        IpApplyInfo.AppliedInfo appliedInfo72 = ipApplyInfo.getIpreginfos().get(new Integer(72));
-        if (appliedInfo72.getCnt() >= 30) {
-            return true;
-        }*/
         return false;
     }
 
@@ -98,11 +75,8 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
     }
 
     public T getResult() {
-        return (T)result;
+        return (T) result;
     }
 
-    @Override
-    protected String getRuleid() {
-        return "G00110";
-    }
+
 }

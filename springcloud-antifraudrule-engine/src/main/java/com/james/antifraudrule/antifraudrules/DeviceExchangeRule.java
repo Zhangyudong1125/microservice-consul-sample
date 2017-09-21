@@ -29,10 +29,7 @@ import java.util.Set;
 @Component("G00104")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DeviceExchangeRule<T> extends AbsAntiFraudRule {
-    @Override
-    protected String getRuleid() {
-        return "G00104";
-    }
+
 
     @Override
     public boolean isExecuted() {
@@ -61,7 +58,7 @@ public class DeviceExchangeRule<T> extends AbsAntiFraudRule {
         Set<String> ipSet = redisTemplate.opsForZSet().range(contentIpaddKey, 0, -1);
 
         //String contentKey = "LOGN_EVENT:86000000000110:devicePrint:ABS87DJJR777D"  action + ":contractNo:"+markName + ":" + mark;*/;
-        //String convalue = "ABS87DJJR777D:677637763:6";
+        //String convalue = "fingerprint:ABS87DJJR777D:677637763:6";
         if (isTop2(devivcePrint, deviceSet)) {
             return false;
         }

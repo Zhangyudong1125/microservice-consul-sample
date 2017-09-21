@@ -13,25 +13,25 @@ import lombok.Data;
 @Data
 public class ContentRec {
 
+    private String conTentName;
     private String content;
-
     private int    cnt;
-
     private long   timeslong;
 
-    public  void increascnt(){
+    public void increascnt() {
         cnt++;
     }
 
     public ContentRec(String setStr) {
         String[] splistr = setStr.split(":");
-        content = splistr[0];
-        cnt = Integer.valueOf(splistr[1]).intValue();
+        conTentName = splistr[0];
+        content = splistr[1];
         timeslong = Long.valueOf(splistr[2]).longValue();
+        cnt = Integer.valueOf(splistr[3]).intValue();
     }
 
     public String toSetString() {
-        String setstr = content + ":" + timeslong + ":" + cnt;
+        String setstr = conTentName + ":" + content + ":" + timeslong + ":" + cnt;
         return setstr;
     }
 

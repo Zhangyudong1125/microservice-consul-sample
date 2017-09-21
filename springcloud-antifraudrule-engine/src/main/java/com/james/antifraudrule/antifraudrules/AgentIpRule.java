@@ -6,33 +6,22 @@ package com.james.antifraudrule.antifraudrules;
 
 /**
  * @author militang
- * @version Id: DeviceApplyRule.java, v 0.1 17/9/21 上午10:09 militang Exp $$
+ * @version Id: AgentIpRule.java, v 0.1 17/9/21 下午4:36 militang Exp $$
  */
 
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
-import com.james.antifraudrule.component.DeviceRuleChkComponent;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
-import com.james.antifraudrule.dto.variablevo.ContentRec;
-import com.james.antifraudrule.enums.AntiFraudTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.easyrules.annotation.Action;
-import org.easyrules.annotation.Condition;
 import org.easyrules.annotation.Rule;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
-@Rule(name = "设备集中申请")
+@Rule(name = "申请时点IP为代理IP")
 @Slf4j
-@Component("G00103")
+@Component("G00109")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DeviceApplyRule<T> extends AbsAntiFraudRule {
-
-    @Autowired
-    private DeviceRuleChkComponent deviceRuleChkComponent;
-
+public class AgentIpRule<T> extends AbsAntiFraudRule {
 
     @Override
     public boolean isExecuted() {
@@ -44,25 +33,20 @@ public class DeviceApplyRule<T> extends AbsAntiFraudRule {
         return (T) result;
     }
 
-    @Condition
+    @Override
     public boolean when() {
 
-        String devivcePrint = antiFraudObj.getLocation().getDeveiceFingerprint();
-        String contentKey = AntiFraudTypeEnum.AUTHAPPLY_EVENT + ":devicePrint:" + devivcePrint;
-
-        if (deviceRuleChkComponent.devicechkrule(contentKey)) {
-            return true;
-        }
+        //// TODO: 17/9/21 代理ip 查询对接 
         return false;
     }
 
-    @Action
+    @Override
     public void then() throws Exception {
         try {
-            log.info("DeviceApplyRule has been executed");
+            log.info("AgentIpRule has been executed");
             RiskRuleResDto riskRuleResDto = new RiskRuleResDto();
             riskRuleResDto.setRuleid(getRuleid());
-            riskRuleResDto.setRuledesc("触发 设备集中申请超限 规则");
+            riskRuleResDto.setRuledesc("触发 申请时点IP为代理IP 规则");
             result = (T) riskRuleResDto; // assign your result here
             executed = true;
         } catch (Exception e) {

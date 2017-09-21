@@ -36,6 +36,8 @@ public class AntiFraudActionAccumulate {
 
         String action = antiFraudObj.getBizinfo().getAction();
 
+        String emergeNo = antiFraudObj.getActor().getContactPhone1();
+
         String devicePrint = antiFraudObj.getLocation().getDeveiceFingerprint();
 
         String gps = antiFraudObj.getLocation().getGpsDesc();
@@ -65,6 +67,7 @@ public class AntiFraudActionAccumulate {
         }
 
         if (action.equals(AntiFraudTypeEnum.AUTHAPPLY_EVENT.name())) {
+            eventHourAccumulate(action, null, emergeNo, "emergeNo", 3); //紧急联系人
             /*
             申请时使用设备近3小时申贷用户数≥2
             申请时使用设备近7天申贷用户数≥3*/
@@ -107,7 +110,6 @@ public class AntiFraudActionAccumulate {
                     redisTemplate.expire(contentKey, longterm, TimeUnit.HOURS);
                     iscontain = true;
                 }
-
             }
             if (!iscontain) {
                 convalue_pre = convalue_pre + "1";
@@ -141,7 +143,7 @@ public class AntiFraudActionAccumulate {
             //申请时点登录IP所在城市非近30天TOP2常用登录地且登录设备非近30天TOP2常登录设备
             //   if (redisTemplate.opsForSet().isMember(cityloginkey,))
 
-            String convalue_pre = mark + ":" + windowTimeDays + ":";
+            String convalue_pre = markName + ":" + mark + ":" + windowTimeDays + ":";
             //Set<String> set = redisTemplate.opsForSet().members(cityloginkey);
 
             Set<String> set = redisTemplate.opsForZSet().range(contentKey, 0, -1);

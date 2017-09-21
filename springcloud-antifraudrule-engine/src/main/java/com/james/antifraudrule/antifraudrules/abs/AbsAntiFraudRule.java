@@ -35,7 +35,11 @@ public abstract class AbsAntiFraudRule<T> {
 
     public Object           variable;
 
-    protected abstract String getRuleid();
+    protected String getRuleid() {
+        Component component = this.getClass().getAnnotation(Component.class);
+        String ruleid = component.value();
+        return ruleid;
+    }
 
     public abstract boolean isExecuted();
 
