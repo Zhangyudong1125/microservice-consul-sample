@@ -35,10 +35,6 @@ public class IpRegRule<T> extends AbsAntiFraudRule {
     @Autowired
     private RedisWindows redisWindows;
 
-    private boolean      executed;
-
-    private T            result;
-
     @Condition
     public boolean when() {
         String ip = super.getIp();
@@ -85,7 +81,7 @@ public class IpRegRule<T> extends AbsAntiFraudRule {
     }
 
     public T getResult() {
-        return result;
+        return (T) result;
     }
 
     @Override

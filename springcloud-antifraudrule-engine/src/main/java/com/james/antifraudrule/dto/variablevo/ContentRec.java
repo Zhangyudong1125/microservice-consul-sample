@@ -8,10 +8,10 @@ import lombok.Data;
 
 /**
  * @author militang
- * @version Id: LoginRec.java, v 0.1 17/9/19 下午5:24 militang Exp $$
+ * @version Id: ContentRec.java, v 0.1 17/9/19 下午5:24 militang Exp $$
  */
 @Data
-public class LoginRec {
+public class ContentRec {
 
     private String content;
 
@@ -23,7 +23,7 @@ public class LoginRec {
         cnt++;
     }
 
-    public LoginRec(String setStr) {
+    public ContentRec(String setStr) {
         String[] splistr = setStr.split(":");
         content = splistr[0];
         cnt = Integer.valueOf(splistr[1]).intValue();

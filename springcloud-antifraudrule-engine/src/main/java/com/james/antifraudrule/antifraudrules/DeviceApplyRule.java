@@ -4,6 +4,11 @@
  */
 package com.james.antifraudrule.antifraudrules;
 
+/**
+ * @author militang
+ * @version Id: DeviceApplyRule.java, v 0.1 17/9/21 上午10:09 militang Exp $$
+ */
+
 import com.james.antifraudrule.antifraudrules.abs.AbsAntiFraudRule;
 import com.james.antifraudrule.dto.ruleresdto.RiskRuleResDto;
 import com.james.antifraudrule.dto.variablevo.ContentRec;
@@ -18,25 +23,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-/**
- * @author militang
- * @version Id: DeviceLoginRule.java, v 0.1 17/9/19 下午10:31 militang Exp $$
- */
-
-/*申请时使用设备近12小时登录用户数≥2
-        申请时使用设备近7天登录用户数≥3*/
-
-@Rule(name = "申请时使用设备近12小时登录用户数")
+@Rule(name = "设备集中申请")
 @Slf4j
-@Component("G00102")
+@Component("G00103")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DeviceLoginRule<T> extends AbsAntiFraudRule {
-
-
-
+public class DeviceApplyRule<T> extends AbsAntiFraudRule {
     @Override
     protected String getRuleid() {
-        return "G00102";
+        return "G00103";
     }
 
     @Override
@@ -45,38 +39,37 @@ public class DeviceLoginRule<T> extends AbsAntiFraudRule {
     }
 
     @Override
-    public Object getResult() {
+    public T getResult() {
         return (T)result;
     }
 
     @Condition
     public boolean when() {
-        String devivcePrint = antiFraudObj.getLocation().getDeveiceFingerprint();
-        String contentKey = AntiFraudTypeEnum.LOGIN_EVENT + ":devicePrint:" + devivcePrint;
 
-        Set<String> set = redisTemplate.opsForZSet().range(contentKey, 0, -1);
+        String devivcePrint = antiFraudObj.getLocation().getDeveiceFingerprint();
+        String contentKey = AntiFraudTypeEnum.AUTHAPPLY_EVENT + ":devicePrint:" + devivcePrint;
+
+        Set<String> applyDeviceSet = redisTemplate.opsForZSet().range(contentKey, 0, -1);
 
         int windowTimehrss = Long.valueOf(System.currentTimeMillis() / 1000 / (3600)).intValue();
 
-        int usr12hrs = 0;//使用设备近12小时登录用户数
+        int usr3hrs = 0;//使用设备近3小时登录用户数
         int usr168hrs = 0;//使用设备近7时登录用户数
-        int windowTimeusr12hrs = windowTimehrss - 12;
+        int windowTimeusr3hrs = windowTimehrss - 3;
         int windowTimeusr168hrs = windowTimehrss - 168;
 
-        for (String devicelogin : set) {
-            ContentRec loginRec = new ContentRec(devicelogin);
-            if (loginRec.getTimeslong() >= windowTimeusr12hrs) {
-                usr12hrs++;
+        for (String deviceApply : applyDeviceSet) {
+            ContentRec loginRec = new ContentRec(deviceApply);
+            if (loginRec.getTimeslong() >= windowTimeusr3hrs) {
+                usr3hrs++;
             }
             if (loginRec.getTimeslong() >= windowTimeusr168hrs) {
                 usr168hrs++;
             }
-            if ((usr12hrs >= 2) || (usr168hrs >= 3)) {
+            if ((usr3hrs >= 2) || (usr168hrs >= 3)) {
                 return true;
             }
         }
-
-        //申请时使用设备近12小时登录用户数≥2 申请时使用设备近7天登录用户数≥3
 
         return false;
     }
@@ -84,14 +77,13 @@ public class DeviceLoginRule<T> extends AbsAntiFraudRule {
     @Action
     public void then() throws Exception {
         try {
-            log.info("IpRegRule has been executed");
+            log.info("DeviceApplyRule has been executed");
             RiskRuleResDto riskRuleResDto = new RiskRuleResDto();
             riskRuleResDto.setRuleid(getRuleid());
-            riskRuleResDto.setRuledesc("触发 申请时使用设备近12小时登录用户数 规则");
+            riskRuleResDto.setRuledesc("触发 设备集中申请超限 规则");
             result = (T) riskRuleResDto; // assign your result here
             executed = true;
         } catch (Exception e) {
-            // executed flag will remain false if an exception occurs
             throw e;
         }
     }

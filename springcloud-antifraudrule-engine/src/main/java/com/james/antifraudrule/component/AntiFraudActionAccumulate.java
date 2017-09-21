@@ -6,7 +6,7 @@ package com.james.antifraudrule.component;
 
 import com.google.common.base.Strings;
 import com.james.antifraudrule.dto.antifraudbizreqdto.AntiFraudObj;
-import com.james.antifraudrule.dto.variablevo.LoginRec;
+import com.james.antifraudrule.dto.variablevo.ContentRec;
 import com.james.antifraudrule.enums.AntiFraudTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -65,7 +65,8 @@ public class AntiFraudActionAccumulate {
         }
 
         if (action.equals(AntiFraudTypeEnum.AUTHAPPLY_EVENT.name())) {
-            /*           申请时使用设备近3小时申贷用户数≥2
+            /*
+            申请时使用设备近3小时申贷用户数≥2
             申请时使用设备近7天申贷用户数≥3*/
             eventHourAccumulate(action, null, devicePrint, "devicePrint", 168);
             eventHourAccumulate(action, null, ip, "ip", 72);
@@ -95,7 +96,7 @@ public class AntiFraudActionAccumulate {
 
             boolean iscontain = false;
             for (String loingstr : set) {
-                LoginRec loginRec = new LoginRec(loingstr);
+                ContentRec loginRec = new ContentRec(loingstr);
                 if (loginRec.getTimeslong() + longterm < windowTimehrss) {
                     redisTemplate.opsForZSet().remove(contentKey, loingstr);
                 } else if (loingstr.startsWith(convalue_pre)) {
@@ -147,7 +148,7 @@ public class AntiFraudActionAccumulate {
 
             boolean iscontain = false;
             for (String loingstr : set) {
-                LoginRec loginRec = new LoginRec(loingstr);
+                ContentRec loginRec = new ContentRec(loingstr);
                 if (loginRec.getTimeslong() + daycnt < windowTimeDays) {
                     redisTemplate.opsForZSet().remove(contentKey, loingstr);
                 } else if (loingstr.startsWith(convalue_pre)) {

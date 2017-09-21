@@ -31,9 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IpApplyRule<T> extends AbsAntiFraudRule {
 
-    private boolean      executed;
 
-    private T            result;
 
     @Autowired
     private RedisWindows redisWindows;
@@ -100,11 +98,11 @@ public class IpApplyRule<T> extends AbsAntiFraudRule {
     }
 
     public T getResult() {
-        return result;
+        return (T)result;
     }
 
     @Override
     protected String getRuleid() {
-        return "G00101";
+        return "G00110";
     }
 }
