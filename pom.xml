@@ -20,9 +20,9 @@
     </modules>
 
     <parent>
-        <groupId>com.truderal.framework</groupId>
-        <artifactId>truderal-parent</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <groupId>com.shanlin.parent</groupId>
+        <artifactId>shanlin-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <properties>
